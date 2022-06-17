@@ -61,7 +61,8 @@ func defaultRemoteFetchStrategy(remoteFetchHost string, versionStrategy VersionS
 				}
 			}
 		}
-
+		blen := len(jarBodyBytes)
+		fmt.Printf("byteslen=%d content-len=%d\n", blen, jarDownloadResponse.ContentLength)
 		return decompressResponse(jarBodyBytes, jarDownloadResponse.ContentLength, cacheLocator, jarDownloadURL)
 	}
 }
@@ -84,11 +85,13 @@ func decompressResponse(bodyBytes []byte, contentLength int64, cacheLocator Cach
 		if !file.FileHeader.FileInfo().IsDir() && strings.HasSuffix(file.FileHeader.Name, ".txz") {
 			archiveReader, err := file.Open()
 			if err != nil {
+				fmt.Printf("error on file.Open()\n")
 				return errorExtractingPostgres(err)
 			}
 
 			archiveBytes, err := ioutil.ReadAll(archiveReader)
 			if err != nil {
+				fmt.Printf("error on ioutil.ReadAll()\n")
 				return errorExtractingPostgres(err)
 			}
 
